@@ -1,0 +1,74 @@
+@import "@styles/_mixin.scss";
+
+* {
+  box-sizing: border-box;
+}
+body {
+  font-family: "Source Sans Pro", sans-serif;
+}
+
+h1 {
+  font-family: "Playfair Display", serif;
+  color: #333333;
+}
+
+.wrap {
+  @include flex(unset, center, 30px);
+  flex-direction: column;
+  @include size(100%, 90%);
+  border: 1px solid black;
+  margin-top: 40px;
+  border-radius: 10%;
+  padding: 0px 50px;
+}
+
+.header {
+  @include flex(center, center, 20px);
+}
+
+.pathFolder {
+  @include flex(center, center, 15px);
+  @include size(100%, 50px);
+  padding: 20px 20px 20px 0;
+  border: 1px solid black;
+  border-radius: 20px;
+  overflow: hidden;
+  position: relative;
+}
+
+.folderBtn {
+  @include flex(center, center, 10px);
+  @include size(100%, 50px);
+  border-right: 1px solid black;
+  cursor: pointer;
+  background-color: #2c3e50;
+
+  transition: background-color 0.3s ease, color 0.3s ease;
+  &:hover {
+    background-color: white;
+    color: black;
+  }
+}
+
+.xrayContainer {
+  @include size(100%, 50%);
+  background-color: #f8f9fb;
+  border-radius: 5px;
+  @include flex(center, center, 0);
+  font-size: 50px;
+  color: gray;
+}
+
+.btn {
+  @include size(50%, 40px);
+  border-radius: 8px;
+  background-color: rgb(91, 145, 145);
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+
+  &:hover {
+    background-color: white;
+    color: black;
+  }
+}
