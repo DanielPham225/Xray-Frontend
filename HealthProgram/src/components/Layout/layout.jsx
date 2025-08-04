@@ -1,4 +1,4 @@
-import styles from "./Layout.module.scss";
+import styles from "./layout.module.scss";
 function Layout({ children }) {
   return (
     <main className={styles.wrapLayout}>
