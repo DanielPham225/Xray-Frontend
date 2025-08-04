@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import styles from "./app.module.scss";
-import Layout from "@compo/Layout/layout.jsx";
+import Layout from "@compo/layout/layout.jsx";
 import { FaXRay, FaFolder } from "react-icons/fa";
 
 function App() {
