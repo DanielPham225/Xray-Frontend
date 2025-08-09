@@ -2,30 +2,45 @@ import React, { useState } from "react";
 import styles from "./app.module.scss";
 import Layout from "@compo/Layout/layout.jsx";
 import { FaXRay, FaFolder } from "react-icons/fa";
+import { uploadXray } from "./api"; // API helper
 
 function App() {
   const { wrap, header, pathFolder, folderBtn, xrayContainer, btn } = styles;
-  const [files, setFiles] = useState([]);
+
+  const [file, setFile] = useState(null);
   const [previews, setPreviews] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [result, setResult] = useState(null);
+  const [error, setError] = useState("");
 
-  const handleFilesSelect = (e) => {
-    const selectedFiles = Array.from(e.target.files);
-    const previews = selectedFiles.map((file) => {
-      if (file.type.startsWith("image/")) {
-        return {
-          name: file.name,
-          type: file.type,
-          url: URL.createObjectURL(file),
-        };
-      } else {
-        return Promise.resolve({
-          name: file.name,
-          type: file.type,
-        });
-      }
-    });
+  const handleFileSelect = (e) => {
+    const f = e.target.files?.[0] ?? null;
+    setFile(f);
+    if (f) {
+      setPreviews([
+        { name: f.name, type: f.type, url: URL.createObjectURL(f) }
+      ]);
+    } else {
+      setPreviews([]);
+    }
+  };
 
-    Promise.all(previews).then((results) => setPreviews(results));
+  const handleCheck = async () => {
+    if (!file) {
+      setError("Please choose an image.");
+      return;
+    }
+    setLoading(true);
+    setError("");
+    setResult(null);
+    try {
+      const data = await uploadXray(file); // { Cluster, MinDistance, IsAnomaly }
+      setResult(data);
+    } catch (err) {
+      setError(err.message || "Upload failed");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -42,23 +57,22 @@ function App() {
           {/* folder Btn */}
           <label className={folderBtn}>
             <FaFolder style={{ fontSize: "30px", fill: "#fecf05" }} />
-            <p>Import Folder</p>
+            <p>Import Image</p>
             <input
               type="file"
+              accept="image/*"
               style={{ display: "none" }}
-              onChange={handleFilesSelect}
+              onChange={handleFileSelect}
             />
           </label>
 
-          {/* path  */}
+          {/* file list */}
           <div style={{ width: "100%" }}>
-            {" "}
             {previews.length > 0 ? (
               <ul>
-                {previews.map((file, index) => {
-                  console.log(previews);
-                  return <li key={index}>{file.name}</li>;
-                })}
+                {previews.map((file, index) => (
+                  <li key={index}>{file.name}</li>
+                ))}
               </ul>
             ) : (
               <p>No files selected</p>
@@ -66,7 +80,7 @@ function App() {
           </div>
         </div>
 
-        {/* Xray */}
+        {/* Xray preview */}
         {previews.length > 0 ? (
           previews.map((file, index) => (
             <div key={index} style={{ width: "100%" }}>
@@ -77,24 +91,36 @@ function App() {
                   style={{ maxWidth: "100%", maxHeight: "100%" }}
                 />
               )}
-              {file.content && (
-                <pre style={{ maxHeight: "100px", overflow: "auto" }}>
-                  {file.content}
-                </pre>
-              )}
             </div>
           ))
         ) : (
           <div className={xrayContainer}>Xray</div>
         )}
 
-        {/* show result button*/}
-        <button className={btn}>Check</button>
+        {/* Check button */}
+        <button
+          className={btn}
+          disabled={loading || !file}
+          onClick={handleCheck}
+        >
+          {loading ? "Analyzing…" : "Check"}
+        </button>
 
-        {/* result */}
-        <div style={{ fontSize: "30px", marginBottom: "20px" }}>
-          result: {"u got cancer"}
-        </div>
+        {/* Error */}
+        {error && (
+          <div style={{ color: "crimson", fontSize: 16, marginTop: 12 }}>
+            {error}
+          </div>
+        )}
+
+        {/* Result */}
+        {result && (
+          <div style={{ fontSize: 18, marginTop: 12 }}>
+            <div>Cluster: <b>{result.Cluster}</b></div>
+            <div>MinDistance: <b>{Number(result.MinDistance).toFixed(4)}</b></div>
+            <div>IsAnomaly: <b>{String(result.IsAnomaly)}</b></div>
+          </div>
+        )}
       </div>
     </Layout>
   );
