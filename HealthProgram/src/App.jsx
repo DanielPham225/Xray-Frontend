@@ -35,6 +35,7 @@ function App() {
     setResult(null);
     try {
       const data = await uploadXray(file); // { Cluster, MinDistance, IsAnomaly }
+      console.log("Backend response:", data); // add this
       setResult(data);
     } catch (err) {
       setError(err.message || "Upload failed");
@@ -115,12 +116,12 @@ function App() {
 
         {/* Result */}
         {result && (
-          <div style={{ fontSize: 18, marginTop: 12 }}>
-            <div>Cluster: <b>{result.Cluster}</b></div>
-            <div>MinDistance: <b>{Number(result.MinDistance).toFixed(4)}</b></div>
-            <div>IsAnomaly: <b>{String(result.IsAnomaly)}</b></div>
-          </div>
-        )}
+  <div style={{ fontSize: 18, marginTop: 12 }}>
+    <div>Cluster: <b>{result.cluster}</b></div>
+    <div>MinDistance: <b>{Number(result.minDistance).toFixed(4)}</b></div>
+    <div>IsAnomaly: <b>{String(result.isAnomaly)}</b></div>
+  </div>
+)}
       </div>
     </Layout>
   );
